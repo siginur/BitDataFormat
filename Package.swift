@@ -24,7 +24,7 @@ let package = Package(
         .testTarget(
             name: "BitDataFormatTests",
             dependencies: ["BitDataFormat"],
-            resources: [.copy("all.json")],
+//            resources: [.copy("all.json")],
         ),
     ]
 )

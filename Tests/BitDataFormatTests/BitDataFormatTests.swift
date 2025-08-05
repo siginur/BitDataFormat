@@ -108,8 +108,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
         let nullValues: [Any?] = [nil, NSNull()]
         
         for value in nullValues {
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertTrue(uncompressedValue is NSNull)
             
             let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -119,8 +119,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     
     func testPrimitiveTrue() throws {
         let value = true
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertEqual(value, uncompressedValue as? Bool)
         
         let jsonData = try JSONSerialization.data(withJSONObject: value, options: [.fragmentsAllowed])
@@ -129,8 +129,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     
     func testPrimitiveFalse() throws {
         let value = false
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertEqual(value, uncompressedValue as? Bool)
         
         let jsonData = try JSONSerialization.data(withJSONObject: value, options: [.fragmentsAllowed])
@@ -139,8 +139,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     
     func testNumberZero() throws {
         let value = 0
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertEqual(value, uncompressedValue as? Int)
         
         let jsonData = try JSONSerialization.data(withJSONObject: value, options: [.fragmentsAllowed])
@@ -166,8 +166,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
         let listOfValues = negativeValues + positiveValues
         
         for value in listOfValues {
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertEqual(value, uncompressedValue as? Int)
             
             let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -184,8 +184,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
         let listOfValues = negativeValues + positiveValues
         
         for value in listOfValues {
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertEqual(value, uncompressedValue as? Int)
             
             let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -204,8 +204,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
         
         for value in listOfValues {
             print(value)
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             if let intValue = uncompressedValue as? Int {
                 XCTAssertEqual(value as? Int, intValue)
             }
@@ -223,8 +223,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     
     func testStringEmpty() throws {
         let value = ""
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertEqual(value, uncompressedValue as? String)
         
         let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -250,24 +250,24 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
             }
             let string = String(Character(scalar))
             
-            let compressedData = try BDFSerialization.data(withBSDObject: string)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: string)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertEqual(string, uncompressedValue as? String)
         }
     }
     
     func testStringUTF8() throws {
         for sample in SampleData.shared.sampleDataStrings {
-            let compressedData = try BDFSerialization.data(withBSDObject: sample)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: sample)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertEqual(sample, uncompressedValue as? String)
         }
     }
     
     func testArrayEmpty() throws {
         let value: [Any] = []
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         guard let uncompressedArray = uncompressedValue as? [Any] else {
             XCTFail("Uncompressed value is not an array")
             return
@@ -281,8 +281,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     func testArraySingleElement() throws {
         let listOfValues: [[Any]] = SampleData.shared.allTypes.map { [$0] }
         for value in listOfValues {
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertAnyEqual(value, uncompressedValue)
             
             let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -305,8 +305,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     
     func testDictionaryEmpty() throws {
         let value: [String: Any] = [:]
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         guard let uncompressedArray = uncompressedValue as? [String: Any] else {
             XCTFail("Uncompressed value is not an dictionary")
             return
@@ -320,8 +320,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     func testDictionarySingleElement() throws {
         let listOfValues: [[String: Any]] = SampleData.shared.allTypes.enumerated().map { ["key": $1] }
         for value in listOfValues {
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertAnyEqual(value, uncompressedValue)
             
             let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -348,8 +348,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     private func testNumberInRange(from: Int, upto: Int) throws {
         for value in from...upto {
             try autoreleasepool {
-                let compressedData = try BDFSerialization.data(withBSDObject: value)
-                let uncompressedValue = try BDFSerialization.object(with: compressedData)
+                let compressedData = try BDFSerialization.data(withBDFObject: value)
+                let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
                 XCTAssertEqual(value, uncompressedValue as? Int)
                 
                 if value > 99 { // Known issue: BDFSerialization does not compress numbers smaller than 99
@@ -368,8 +368,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
         let listOfValues: [Any] = (negativeValues + positiveValues).sorted().compactMap({ Int(String($0)) ?? UInt(String($0)) })
         
         for value in listOfValues {
-            let compressedData = try BDFSerialization.data(withBSDObject: value)
-            let uncompressedValue = try BDFSerialization.object(with: compressedData)
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             if let intValue = uncompressedValue as? Int {
                 XCTAssertEqual(value as? Int, intValue)
             }
@@ -387,8 +387,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     
     private func testString(with alphabet: BitDataAlphabet) throws {
         let value = alphabet.charactersSet.map(String.init).joined()
-        let compressedData = try BDFSerialization.data(withBSDObject: value)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: value)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertEqual(value, uncompressedValue as? String)
         
         let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
@@ -396,8 +396,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     }
     
     private func test(array: [Any]) throws {
-        let compressedData = try BDFSerialization.data(withBSDObject: array)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: array)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertAnyEqual(array, uncompressedValue)
         
         let jsonData = try JSONSerialization.data(withJSONObject: array, options: [.fragmentsAllowed])
@@ -405,8 +405,8 @@ final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
     }
     
     private func test(dictionary: [String: Any]) throws {
-        let compressedData = try BDFSerialization.data(withBSDObject: dictionary)
-        let uncompressedValue = try BDFSerialization.object(with: compressedData)
+        let compressedData = try BDFSerialization.data(withBDFObject: dictionary)
+        let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
         XCTAssertAnyEqual(dictionary, uncompressedValue)
         
         let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.fragmentsAllowed])

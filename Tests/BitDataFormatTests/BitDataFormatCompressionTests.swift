@@ -68,8 +68,8 @@ final class BitDataFormatCompressionTests: XCTestCase {
     
     
     func printStats(for value: Any, message: String) {
-        let (sizeInBits, encodedData) = try! BDFSerialization.dataWithStats(withBSDObject: value)
-        let decodedValue = try! BDFSerialization.object(with: encodedData)
+        let (sizeInBits, encodedData) = try! BDFSerialization.dataWithStats(withBDFObject: value)
+        let decodedValue = try! BDFSerialization.bdfObject(with: encodedData)
         XCTAssertAnyEqual(value, decodedValue, "Decoded value does not match original for \(message)")
         let json = try! JSONSerialization.data(withJSONObject: value, options: .fragmentsAllowed)
         
