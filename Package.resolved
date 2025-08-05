@@ -1,0 +1,15 @@
+{
+  "originHash" : "adcdc6824208fe55591888d0f68b2dc9eb8d14bb113e9949abae7e02f9633cd6",
+  "pins" : [
+    {
+      "identity" : "smbitdata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siginur/SMBitData.git",
+      "state" : {
+        "revision" : "b8ef58323b2f58ce13711dd364234d7dff64b5b4",
+        "version" : "1.0.2"
+      }
+    }
+  ],
+  "version" : 3
+}
