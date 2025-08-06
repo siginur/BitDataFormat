@@ -50,3 +50,17 @@ extension SMBitDataWriter {
         self.writeByte(UInt8(value & 0xFF))
     }
 }
+
+extension SMBitDataReader {
+    
+    func readDataTypeSignature() throws -> BitDataType? {
+        let bits = try self.readBits(BitDataType.sizeInBits)
+        return BitDataType(bits: bits)
+    }
+    
+    func readDataSubTypeSignature(for dataType: BitDataType) throws -> BitDataSubType? {
+        let bits = try self.readBits(dataType.subTypeSizeInBits)
+        return BitDataSubType(type: dataType, bits: bits)
+    }
+
+}

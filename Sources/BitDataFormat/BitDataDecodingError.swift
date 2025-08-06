@@ -21,4 +21,8 @@ public enum BitDataDecodingError: Error {
     case numberIsTooBig
     /// The encoded data is not a valid number.
     case failedToDecodeNumber(String)
+    
+    case typeMissmatch
+    case missingDecoder
+    case keyNotFound
 }

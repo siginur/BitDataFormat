@@ -42,6 +42,17 @@ extension BDFSerialization {
         }
     }
     
+//    static func decodeNil(from data: SMBitDataReader) throws {
+//        var bits = try data.readBits(BitDataType.sizeInBits)
+//        guard let dataType = BitDataType(bits: bits), dataType == .primitive else {
+//            throw BitDataDecodingError.typeMissmatch
+//        }
+//        bits = try data.readBits(BitDataSubType.primitiveNull.sizeInBits)
+//        guard let dataSubType = BitDataSubType(type: dataType, bits: bits), dataSubType == .primitiveNull else {
+//            throw BitDataDecodingError.typeMissmatch
+//        }
+//    }
+    
     static func decodePrimitive(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> Any {
         switch dataSubType {
         case .primitiveNull:
@@ -291,21 +302,21 @@ extension BDFSerialization {
             sameValueType = true
         case .collectionSeparator:
             count = nil
-            sameValueType = try data.readBit() == 1
+            sameValueType = try data.readBit() == BitDataConstants.Collection.sameValueType
         case .collection8BitsSize:
             let rawCount = try data.readByte()
             count = Int(rawCount)
-            sameValueType = try data.readBit() == 1
+            sameValueType = try data.readBit() == BitDataConstants.Collection.sameValueType
         case .collection12BitsSize:
             let firstByte = try data.readBits(4)
             let lastByte = try data.readByte()
             count = Int(UInt16(firstByte) << 8 | UInt16(lastByte))
-            sameValueType = try data.readBit() == 1
+            sameValueType = try data.readBit() == BitDataConstants.Collection.sameValueType
         case .collection16BitsSize:
             let firstByte = try data.readByte()
             let lastByte = try data.readByte()
             count = Int(UInt16(firstByte) << 8 | UInt16(lastByte))
-            sameValueType = try data.readBit() == 1
+            sameValueType = try data.readBit() == BitDataConstants.Collection.sameValueType
         default:
             throw BitDataDecodingError.unknownBitDataSubType
         }

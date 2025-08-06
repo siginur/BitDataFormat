@@ -29,6 +29,19 @@ enum BitDataType {
         }
     }
     
+    var subTypes: Set<BitDataSubType> {
+        switch self {
+        case .primitive:
+            return [.primitiveNull, .primitiveTrue, .primitiveFalse]
+        case .number:
+            return [.numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits]
+        case .string:
+            return [.stringEmpty, .stringDigits, .stringLowercased, .stringUppercased, .stringCombined, .stringASCII, .stringUTF8]
+        case .array, .dictionary:
+            return [.collectionEmpty, .collectionSingle, .collectionSeparator, .collection8BitsSize, .collection12BitsSize, .collection16BitsSize]
+        }
+    }
+    
     var bits: UInt8 {
         switch self {
         case .primitive: 0 // 000
@@ -46,6 +59,29 @@ enum BitDataType {
         case 2: self = .string
         case 3: self = .array
         case 4: self = .dictionary
+        default:
+            return nil
+        }
+    }
+    
+    init?(object: Any?) {
+        switch object {
+            // Primitive
+        case _ as Bool, _ as NSNull, nil:
+            self = .primitive
+            // Number
+        case _ as Int, _ as Int8, _ as Int16, _ as Int32, _ as Int64, _ as UInt, _ as UInt8, _ as UInt16, _ as UInt32, _ as UInt64, _ as Float, _ as Double, _ as CGFloat:
+            self = .number
+            // String
+        case _ as String, _ as NSString:
+            self = .string
+            // Array
+        case _ as [Any], _ as NSArray:
+            self = .array
+            // Object
+        case _ as [String: Any]:
+            self = .dictionary
+            // Unsupported
         default:
             return nil
         }

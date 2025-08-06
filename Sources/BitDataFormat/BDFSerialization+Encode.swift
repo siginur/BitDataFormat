@@ -10,6 +10,13 @@ import SMBitData
 
 extension BDFSerialization {
     static func encode(object: Any?, includeType: Bool, to data: SMBitDataWriter) throws {
+        guard let object else {
+            if includeType {
+                data.writeTypeSignature(.primitive)
+            }
+            data.writeTypeSignature(.primitiveNull)
+            return
+        }
         switch object {
             // Primitive types
         case let v as Bool:
@@ -17,7 +24,7 @@ extension BDFSerialization {
                 data.writeTypeSignature(.primitive)
             }
             data.writeTypeSignature(v == true ? .primitiveTrue : .primitiveFalse)
-        case _ as NSNull, nil:
+        case _ as NSNull:
             if includeType {
                 data.writeTypeSignature(.primitive)
             }
@@ -127,38 +134,38 @@ extension BDFSerialization {
             try self.encode(dictionary: v, to: data)
             
         default:
-            throw BitDataEncodingError.unsupportedType
+            throw BitDataEncodingError.unsupportedType(type(of: object))
         }
     }
     
-    static func encode(number num: UInt64, isPositive: Bool, to data: SMBitDataWriter) throws {
+    static func encode(number: UInt64, isPositive: Bool, to data: SMBitDataWriter) throws {
         let sign = isPositive == true ? BitDataConstants.Number.signPositive : BitDataConstants.Number.signNegative
         
-        if num == 0 {
+        if number == 0 {
             data.writeTypeSignature(.numberZero)
         }
-        else if num <= BitDataConstants.Number.digitsMaxValue {
-            try self.encode(digits: (isPositive ? "" : "-") + String(num), to: data)
+        else if number <= BitDataConstants.Number.digitsMaxValue {
+            try self.encode(digits: (isPositive ? "" : "-") + String(number), to: data)
         }
-        else if num <= BitDataConstants.Number.bits16MaxValue {
+        else if number <= BitDataConstants.Number.bits16MaxValue {
             data.writeTypeSignature(.number16Bits)
             data.writeBit(sign)
-            data.writeBytes(UInt16(num))
+            data.writeBytes(UInt16(number))
         }
-        else if num <= BitDataConstants.Number.bits24MaxValue {
+        else if number <= BitDataConstants.Number.bits24MaxValue {
             data.writeTypeSignature(.number24Bits)
             data.writeBit(sign)
-            data.writeUInt24(UInt32(num))
+            data.writeUInt24(UInt32(number))
         }
-        else if num <= BitDataConstants.Number.bits32MaxValue {
+        else if number <= BitDataConstants.Number.bits32MaxValue {
             data.writeTypeSignature(.number32Bits)
             data.writeBit(sign)
-            data.writeBytes(UInt32(num))
+            data.writeBytes(UInt32(number))
         }
-        else if num <= BitDataConstants.Number.bits64MaxValue {
+        else if number <= BitDataConstants.Number.bits64MaxValue {
             data.writeTypeSignature(.number64Bits)
             data.writeBit(sign)
-            data.writeBytes(UInt64(num))
+            data.writeBytes(UInt64(number))
         }
         else {
             throw BitDataEncodingError.numberIsTooBig
@@ -259,8 +266,8 @@ extension BDFSerialization {
         for (index, (key, value)) in dictionary.enumerated() {
             try self.encode(string: key, to: data)
             if index == 0 {
-                guard let type = self.dataType(of: value) else {
-                    throw BitDataEncodingError.unsupportedType
+                guard let type = BitDataType(object: value) else {
+                    throw BitDataEncodingError.unsupportedType(type(of: value))
                 }
                 data.writeTypeSignature(type)
             }
@@ -277,8 +284,9 @@ extension BDFSerialization {
         var sameValueType = true
 
         if count > 1 {
+            let baseDataType = BitDataType(object: collection[0])
             for i in 1..<count {
-                if self.dataType(of: collection[i]) != self.dataType(of: collection[0]) {
+                if BitDataType(object: collection[i]) != baseDataType {
                     sameValueType = false
                     break
                 }

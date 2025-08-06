@@ -23,6 +23,12 @@ public class BDFSerialization {
         }
         return try self.decode(from: data, as: nil)
     }
+    
+    public static func json(with data: Data, options: JSONSerialization.WritingOptions = []) throws -> String? {
+        let object = try self.bdfObject(with: data)
+        let jsonData = try JSONSerialization.data(withJSONObject: object, options: options)
+        return String(data: jsonData, encoding: .utf8)
+    }
 }
 
 extension BDFSerialization {
@@ -31,23 +37,5 @@ extension BDFSerialization {
         data.writeBits(BitDataConstants.currentVresion, count: BitDataConstants.currentVresionSizeInBits) // Version
         try self.encode(object: object, includeType: true, to: data) // Content
         return (data.sizeInBits, data.data)
-    }
-    
-    static func dataType(of object: Any?) -> BitDataType? {
-        return switch object {
-            // Primitive
-        case _ as Bool, _ as NSNull, nil: .primitive
-            // Number
-        case _ as Int, _ as Int8, _ as Int16, _ as Int32, _ as Int64, _ as UInt, _ as UInt8, _ as UInt16, _ as UInt32, _ as UInt64, _ as Float, _ as Double, _ as CGFloat: .number
-            // String
-        case _ as String, _ as NSString: .string
-            // Array
-        case _ as [Any], _ as NSArray: .array
-            // Object
-        case _ as [String: Any]: .dictionary
-            // Unsupported
-        default:
-            nil
-        }
     }
 }

@@ -8,7 +8,7 @@
 /// Errors that can occur while encoding objects to BitDataFormat data.
 public enum BitDataEncodingError: Error {
     /// The type of the object is not supported.
-    case unsupportedType
+    case unsupportedType(Any.Type)
     /// The character is not found in the alphabet.
     case characterNotFoundInAlphabet(Character)
     /// The string cannot be encoded as UTF8.
