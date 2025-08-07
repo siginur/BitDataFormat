@@ -37,19 +37,18 @@ class BDFUnkeyedEncodingContainer: UnkeyedEncodingContainer, BDFEncoderContainer
     }
     
     func superEncoder() -> any Encoder {
-        let encoder = _BDFEncoder()
-        encoder.codingPath.append(BitDataCodingKey.index(self.count))
+        let encoder = _BDFEncoder(codingPath: codingPath + [BitDataCodingKey.index(self.count)])
         self.storage.append(encoder)
         return encoder
     }
     
     func resolveStorage() throws -> Any? {
-        try self.storage.map { element in
+        try self.storage.enumerated().map { index, element in
             if let element = element as? BDFEncoderContainer {
                 return try element.resolveStorage()
             }
             else if let element = element as? Codable {
-                let encoder = _BDFEncoder()
+                let encoder = _BDFEncoder(codingPath: codingPath + [BitDataCodingKey.index(index)])
                 try element.encode(to: encoder)
                 return try encoder.resolveStorage()
             }

@@ -5,7 +5,7 @@
 //  Created by Alexey Siginur on 06/08/2025.
 //
 
-class BDFKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol, BDFDecoderContainer {
+class BDFKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol, BDFDecoderContainer{
     var codingPath: [any CodingKey]
     let allKeys: [Key]
     
@@ -16,7 +16,7 @@ class BDFKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol,
         self.decoder = decoder
         self.storage = storage
         self.codingPath = codingPath
-        self.allKeys = storage.keys.compactMap { BitDataCodingKey.key($0) as? Key }
+        self.allKeys = storage.keys.compactMap { Key(stringValue: $0) }
     }
     
     func contains(_ key: Key) -> Bool {
@@ -25,6 +25,10 @@ class BDFKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol,
     
     func decodeNil(forKey key: Key) throws -> Bool {
         return storage[key.stringValue] == nil
+    }
+    
+    func decodeIfPresent(_ type: Bool.Type, forKey key: Key) throws -> Bool? {
+        fatalError()
     }
     
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {

@@ -35,32 +35,33 @@ extension BDFSerialization {
             if includeType {
                 data.writeTypeSignature(.number)
             }
-            let absolute = v > 0 ? v : -v
-            try self.encode(number: UInt64(absolute), isPositive: v >= 0, to: data)
+            if v == Int64.min {
+                throw BitDataEncodingError.numberIsTooSmall
+            }
+            try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int8:
             if includeType {
                 data.writeTypeSignature(.number)
             }
-            let absolute = v > 0 ? v : -v
-            try self.encode(number: UInt64(absolute), isPositive: v >= 0, to: data)
+            try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int16:
             if includeType {
                 data.writeTypeSignature(.number)
             }
-            let absolute = v > 0 ? v : -v
-            try self.encode(number: UInt64(absolute), isPositive: v >= 0, to: data)
+            try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int32:
             if includeType {
                 data.writeTypeSignature(.number)
             }
-            let absolute = v > 0 ? v : -v
-            try self.encode(number: UInt64(absolute), isPositive: v >= 0, to: data)
+            try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int64:
             if includeType {
                 data.writeTypeSignature(.number)
             }
-            let absolute = v > 0 ? v : -v
-            try self.encode(number: UInt64(absolute), isPositive: v >= 0, to: data)
+            if v == Int64.min {
+                throw BitDataEncodingError.numberIsTooSmall
+            }
+            try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as UInt:
             if includeType {
                 data.writeTypeSignature(.number)

@@ -42,17 +42,6 @@ extension BDFSerialization {
         }
     }
     
-//    static func decodeNil(from data: SMBitDataReader) throws {
-//        var bits = try data.readBits(BitDataType.sizeInBits)
-//        guard let dataType = BitDataType(bits: bits), dataType == .primitive else {
-//            throw BitDataDecodingError.typeMissmatch
-//        }
-//        bits = try data.readBits(BitDataSubType.primitiveNull.sizeInBits)
-//        guard let dataSubType = BitDataSubType(type: dataType, bits: bits), dataSubType == .primitiveNull else {
-//            throw BitDataDecodingError.typeMissmatch
-//        }
-//    }
-    
     static func decodePrimitive(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> Any {
         switch dataSubType {
         case .primitiveNull:

@@ -1,108 +1,15 @@
+//
+//  BDFSerializationTests.swift
+//  BitDataFormat
+//
+//  Created by Alexey Siginur on 05/08/2025.
+//
+
 import XCTest
 import SMBitData
 @testable import BitDataFormat
-//
-//@MainActor fileprivate let sampleDataDifferentTypes: [Any] = [
-//    sampleDataPrimitives,
-//    sampleDataNumbers,
-////    sampleDataStrings,
-//    [[Any]()],
-//    [[String: Any]()]
-//].reduce([], +)
 
-struct SampleData {
-    nonisolated(unsafe) static let shared = SampleData()
-    
-    let latinCharacters: String
-    let greekCharacters: String
-    let chineseCharacters: String
-    let emojiAndSymbols: String
-    let hebrewCharacters: String
-    let sampleDataPrimitives: [Any]
-    let sampleDataNumbers: [Any]
-    let sampleDataStrings: [String]
-    let allTypes: [Any]
-    
-    private init() {
-        let latinCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" // 1 byte characters
-        let greekCharacters = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω" // 2 bytes characters
-        let chineseCharacters = "你好世界中文测试数据字符汉字编程输入输出" // 3 bytes characters
-        let emojiAndSymbols = "😀😂🚀❤️👍🏻🌍📦✨©️®️™️" // 4 bytes characters
-        let hebrewCharacters = "אבגדהוזחטיךכלםמןנסעףפץצקרשת" // 2 bytes characters, RTL
-        
-        let sampleDataPrimitives: [Any] = [
-            NSNull(),
-            true,
-            false
-        ]
-        
-        let sampleDataNumbers: [Any] = [
-            0,
-            BitDataConstants.Number.digitsMaxValue,
-            BitDataConstants.Number.bits16MaxValue,
-            BitDataConstants.Number.bits24MaxValue,
-            BitDataConstants.Number.bits32MaxValue,
-            BitDataConstants.Number.bits64MaxValue,
-            -BitDataConstants.Number.digitsMaxValue + 1,
-            -Int(BitDataConstants.Number.bits16MaxValue) + 1,
-            -BitDataConstants.Number.bits24MaxValue + 1,
-            -Int(BitDataConstants.Number.bits32MaxValue) + 1,
-        ]
-        
-        let sampleDataStrings: [String] = [
-            "",
-            BitDataConstants.String.digitsAlphabet.charactersSet.map(String.init).joined(),
-            BitDataConstants.String.lowercasedAlphabet.charactersSet.map(String.init).joined(),
-            BitDataConstants.String.uppercasedAlphabet.charactersSet.map(String.init).joined(),
-            BitDataConstants.String.combinedAlphabet.charactersSet.map(String.init).joined(),
-            BitDataConstants.String.asciiAlphabet.charactersSet.map(String.init).joined(),
-            Self.generateString(maxByteSize: 15, characters: emojiAndSymbols),
-            Self.generateString(maxByteSize: 255, characters: chineseCharacters),
-            Self.generateString(maxByteSize: 4095, characters: greekCharacters),
-            Self.generateString(maxByteSize: 65535, characters: hebrewCharacters)
-        ]
-        
-//        let sampleDataArrays: [[Any]] = [
-//            // Empty array
-//            [],
-//            // Single element arrays
-//            sampleDataPrimitives.map { [$0] },
-//            sampleDataNumbers.map({ [$0] }),
-//            sampleDataStrings.map({ [$0] }),
-//            // Arrays with different lengths
-//        ]
-        
-        self.latinCharacters = latinCharacters
-        self.greekCharacters = greekCharacters
-        self.chineseCharacters = chineseCharacters
-        self.emojiAndSymbols = emojiAndSymbols
-        self.hebrewCharacters = hebrewCharacters
-        self.sampleDataPrimitives = sampleDataPrimitives
-        self.sampleDataNumbers = sampleDataNumbers
-        self.sampleDataStrings = sampleDataStrings
-        self.allTypes = [
-            sampleDataPrimitives,
-            sampleDataNumbers,
-            sampleDataStrings,
-            [[Any]()],
-            [[String: Any]()]
-        ].reduce([], +)
-    }
-    
-    static func generateString(maxByteSize: Int, characters: String) -> String {
-        var utf8String = ""
-        var nextLength = String(Array(characters)[0]).data(using: .utf8)!.count
-        var nextLetter = String(Array(characters)[1])
-        repeat {
-            utf8String += nextLetter
-            nextLetter = String(Array(characters)[(nextLength + 1) % characters.count])
-            nextLength += nextLetter.data(using: .utf8)!.count
-        } while nextLength <= maxByteSize
-        return utf8String
-    }
-}
-
-final class BitDataFormatTests: XCTestCase, @unchecked Sendable {
+final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
     
     func testPrimitiveNull() throws {
         let nullValues: [Any?] = [nil, NSNull()]

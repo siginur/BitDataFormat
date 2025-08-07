@@ -34,6 +34,7 @@ class BDFUnkeyedDecodingContainer: UnkeyedDecodingContainer, BDFDecoderContainer
     func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
         let rawValue = self.storage[self.currentIndex]
         if let value = rawValue as? T {
+            self.nextIndex()
             return value
         }
         let value = try T(from: _BDFDecoder(storage: rawValue, codingPath: codingPath + [BitDataCodingKey.index(self.currentIndex)], userInfo: self.decoder?.userInfo ?? [:]))

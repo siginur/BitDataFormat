@@ -36,31 +36,33 @@ class BDFKeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol,
     
     func superEncoder() -> any Encoder {
         let codingKey = BitDataCodingKey.key("super")
-        let encoder = _BDFEncoder()
-        encoder.codingPath.append(codingKey)
+        let encoder = _BDFEncoder(codingPath: codingPath + [codingKey])
         self.storage[codingKey.stringValue] = encoder
         return encoder
     }
     
     func superEncoder(forKey key: Key) -> any Encoder {
-        let encoder = _BDFEncoder()
-        encoder.codingPath.append(BitDataCodingKey.key(key.stringValue))
+        let encoder = _BDFEncoder(codingPath: codingPath + [BitDataCodingKey.key(key.stringValue)])
         self.storage[key.stringValue] = encoder
         return encoder
     }
     
     func resolveStorage() throws -> Any? {
-        try self.storage.mapValues { element in
+        var result = [String: Any]()
+        for (key, element) in self.storage {
             if let element = element as? BDFEncoderContainer {
-                return try element.resolveStorage()
+                result[key] = try element.resolveStorage()
             }
             else if let element = element as? Codable {
-                let encoder = _BDFEncoder()
+                let encoder = _BDFEncoder(codingPath: codingPath + [BitDataCodingKey(stringValue: key)])
                 try element.encode(to: encoder)
-                return try encoder.resolveStorage()
+                result[key] = try encoder.resolveStorage()
             }
-            return element
+            else {
+                result[key] = element
+            }
         }
+        return result
     }
     
 }

@@ -28,7 +28,6 @@ class _BDFDecoder: Decoder {
     var userInfo: [CodingUserInfoKey : Any]
     
     let storage: Any
-    private var topLevelContainer: BDFDecoderContainer?
     
     init(storage: Any, codingPath: [any CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.storage = storage
@@ -41,7 +40,6 @@ class _BDFDecoder: Decoder {
             throw BitDataDecodingError.typeMissmatch
         }
         let container = try BDFKeyedDecodingContainer<Key>(decoder: self, storage: value, codingPath: codingPath)
-        self.topLevelContainer = container
         return KeyedDecodingContainer(container)
     }
     
@@ -50,17 +48,12 @@ class _BDFDecoder: Decoder {
             throw BitDataDecodingError.typeMissmatch
         }
         let container = try BDFUnkeyedDecodingContainer(decoder: self, storage: value, codingPath: codingPath)
-        self.topLevelContainer = container
         return container
     }
     
     func singleValueContainer() throws -> any SingleValueDecodingContainer {
         let container = BDFSingleValueDecodingContainer(decoder: self, codingPath: codingPath)
-        self.topLevelContainer = container
         return container
     }
     
-    deinit {
-        self.topLevelContainer?.decoder = nil
-    }
 }

@@ -19,4 +19,6 @@ public enum BitDataEncodingError: Error {
     case collectionIsTooBig(Int)
     /// The number is too big to be encoded.
     case numberIsTooBig
+    /// The number is too small to be encoded.
+    case numberIsTooSmall
 }
