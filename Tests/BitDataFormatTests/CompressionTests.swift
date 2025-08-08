@@ -1,5 +1,5 @@
 //
-//  BitDataFormatCompressionTests.swift
+//  CompressionTests.swift
 //  BitDataFormat
 //
 //  Created by Alexey Siginur on 05/08/2025.
@@ -8,7 +8,7 @@
 import XCTest
 @testable import BitDataFormat
 
-final class BitDataFormatCompressionTests: XCTestCase {
+final class CompressionTests: XCTestCase {
 
     func testExample() throws {
         // Primitives

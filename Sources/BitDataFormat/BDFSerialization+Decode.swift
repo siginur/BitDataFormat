@@ -16,8 +16,7 @@ extension BDFSerialization {
             dataType = forcedDataType
         }
         else {
-            let bits = try data.readBits(BitDataType.sizeInBits)
-            guard let dt = BitDataType(bits: bits) else {
+            guard let dt = try data.readDataTypeSignature() else {
                 throw BitDataDecodingError.unknownBitDataType
             }
             dataType = dt
@@ -35,6 +34,8 @@ extension BDFSerialization {
             return try self.decodeNumber(from: data, as: dataSubType)
         case .string:
             return try self.decodeString(from: data, as: dataSubType)
+        case .date:
+            return try self.decodeDate(from: data, as: dataSubType)
         case .array:
             return try self.decodeArray(from: data, as: dataSubType)
         case .dictionary:
@@ -63,30 +64,19 @@ extension BDFSerialization {
             return try self.decodeDigits(from: data)
         case .number16Bits:
             let isPositive = try data.readBit() == BitDataConstants.Number.signPositive
-            let bytes = try data.readBytes(2)
-            let rawValue = UInt16(bytes[0]) << 8 | UInt16(bytes[1])
+            let rawValue = try data.readUInt16()
             return isPositive ? Int(rawValue) : -Int(rawValue)
         case .number24Bits:
             let isPositive = try data.readBit() == BitDataConstants.Number.signPositive
-            let bytes = try data.readBytes(3)
-            let rawValue = UInt32(bytes[0]) << 16 | UInt32(bytes[1]) << 8 | UInt32(bytes[2])
+            let rawValue = try data.readUInt24()
             return isPositive ? Int(rawValue) : -Int(rawValue)
         case .number32Bits:
             let isPositive = try data.readBit() == BitDataConstants.Number.signPositive
-            let bytes = try data.readBytes(4)
-            let rawValue = UInt32(bytes[0]) << 24 | UInt32(bytes[1]) << 16 | UInt32(bytes[2]) << 8 | UInt32(bytes[3])
+            let rawValue = try data.readUInt32()
             return isPositive ? Int(rawValue) : -Int(rawValue)
         case .number64Bits:
             let isPositive = try data.readBit() == BitDataConstants.Number.signPositive
-            let bytes = try data.readBytes(8)
-            let rawValue = UInt64(bytes[0]) << 56 |
-                           UInt64(bytes[1]) << 48 |
-                           UInt64(bytes[2]) << 40 |
-                           UInt64(bytes[3]) << 32 |
-                           UInt64(bytes[4]) << 24 |
-                           UInt64(bytes[5]) << 16 |
-                           UInt64(bytes[6]) << 8  |
-                           UInt64(bytes[7])
+            let rawValue = try data.readUInt64()
             if rawValue <= Int.max {
                 return isPositive ? Int(rawValue) : -Int(rawValue)
             }
@@ -197,6 +187,22 @@ extension BDFSerialization {
         return string
     }
     
+    static func decodeDate(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> Date {
+        switch dataSubType {
+        case .dateInSeconds:
+            let seconds = try data.readUInt32()
+            return Date(timeIntervalSince1970: TimeInterval(seconds))
+        case .dateInMilliseconds:
+            var milliseconds = UInt64(try data.readUInt32())
+            milliseconds <<= 10
+            milliseconds |= UInt64(try data.readByte()) << 2
+            milliseconds |= UInt64(try data.readBits(2))
+            return Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000.0)
+        default:
+            throw BitDataDecodingError.unknownBitDataSubType
+        }
+    }
+    
     static func decodeArray(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> [Any] {
         guard dataSubType != .collectionEmpty else {
             return []
@@ -218,8 +224,7 @@ extension BDFSerialization {
         
         while finished == false {
             if dataType == nil {
-                let dataTypeRaw = try data.readBits(BitDataType.sizeInBits)
-                guard let dt = BitDataType(bits: dataTypeRaw) else {
+                guard let dt = try data.readDataTypeSignature() else {
                     throw BitDataDecodingError.unknownBitDataType
                 }
                 dataType = dt
@@ -262,8 +267,7 @@ extension BDFSerialization {
         while finished == false {
             let key = try self.decodeString(from: data, as: nil)
             if firstValueDataType == nil {
-                let dataTypeRaw = try data.readBits(BitDataType.sizeInBits)
-                guard let dt = BitDataType(bits: dataTypeRaw) else {
+                guard let dt = try data.readDataTypeSignature() else {
                     throw BitDataDecodingError.unknownBitDataType
                 }
                 firstValueDataType = dt

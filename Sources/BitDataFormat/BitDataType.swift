@@ -11,6 +11,7 @@ enum BitDataType {
     case primitive
     case number
     case string
+    case date
     case array
     case dictionary
     
@@ -24,6 +25,8 @@ enum BitDataType {
             return BitDataSubType.numberZero.sizeInBits
         case .string:
             return BitDataSubType.stringEmpty.sizeInBits
+        case .date:
+            return BitDataSubType.dateInSeconds.sizeInBits
         case .array, .dictionary:
             return BitDataSubType.collectionEmpty.sizeInBits
         }
@@ -37,6 +40,8 @@ enum BitDataType {
             return [.numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits]
         case .string:
             return [.stringEmpty, .stringDigits, .stringLowercased, .stringUppercased, .stringCombined, .stringASCII, .stringUTF8]
+        case .date:
+            return [.dateInSeconds, .dateInMilliseconds]
         case .array, .dictionary:
             return [.collectionEmpty, .collectionSingle, .collectionSeparator, .collection8BitsSize, .collection12BitsSize, .collection16BitsSize]
         }
@@ -47,8 +52,9 @@ enum BitDataType {
         case .primitive: 0 // 000
         case .number: 1 // 001
         case .string: 2 // 010
-        case .array: 3 // 011
-        case .dictionary: 4 // 100
+        case .date: 3 // 011
+        case .array: 4 // 100
+        case .dictionary: 5 // 101
         }
     }
     
@@ -57,8 +63,9 @@ enum BitDataType {
         case 0: self = .primitive
         case 1: self = .number
         case 2: self = .string
-        case 3: self = .array
-        case 4: self = .dictionary
+        case 3: self = .date
+        case 4: self = .array
+        case 5: self = .dictionary
         default:
             return nil
         }
@@ -75,6 +82,8 @@ enum BitDataType {
             // String
         case _ as String, _ as NSString:
             self = .string
+        case _ as Date, _ as NSDate:
+            self = .date
             // Array
         case _ as [Any], _ as NSArray:
             self = .array
@@ -105,6 +114,8 @@ enum BitDataSubType {
     case stringCombined
     case stringASCII
     case stringUTF8
+    case dateInSeconds
+    case dateInMilliseconds
     case collectionEmpty
     case collectionSingle
     case collectionSeparator
@@ -116,7 +127,13 @@ enum BitDataSubType {
         switch self {
         case .primitiveNull, .primitiveTrue, .primitiveFalse:
             return 2
-        default:
+        case .numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits:
+            return 3
+        case .stringEmpty, .stringDigits, .stringLowercased, .stringUppercased, .stringCombined, .stringASCII, .stringUTF8:
+            return 3
+        case .dateInSeconds, .dateInMilliseconds:
+            return 1
+        case .collectionEmpty, .collectionSingle, .collectionSeparator, .collection8BitsSize, .collection12BitsSize, .collection16BitsSize:
             return 3
         }
     }
@@ -143,6 +160,8 @@ enum BitDataSubType {
         case .stringASCII: 5 // 101
         case .stringUTF8: 6 // 110
         //case .stringReserved
+        case .dateInSeconds: 0 // 0
+        case .dateInMilliseconds: 1 // 1
         case .collectionEmpty: 0 // 000
         case .collectionSingle: 1 // 001
         case .collectionSeparator: 2 // 010
@@ -182,6 +201,12 @@ enum BitDataSubType {
             case 4: self = .stringCombined
             case 5: self = .stringASCII
             case 6: self = .stringUTF8
+            default: return nil
+            }
+        case .date:
+            switch bits {
+            case 0: self = .dateInSeconds
+            case 1: self = .dateInMilliseconds
             default: return nil
             }
         case .array, .dictionary:

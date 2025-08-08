@@ -1,5 +1,5 @@
 //
-//  BDFEncoderTests.swift
+//  BDFEncoderBDFDecoderTests.swift
 //  BitDataFormat
 //
 //  Created by Alexey Siginur on 05/08/2025.
@@ -9,7 +9,7 @@ import XCTest
 import SMBitData
 @testable import BitDataFormat
 
-final class BDFEncoderTests: XCTestCase {
+final class BDFEncoderBDFDecoderTests: XCTestCase {
     
     // MARK: - Primitives
     
@@ -87,6 +87,13 @@ final class BDFEncoderTests: XCTestCase {
     func testStrings() {
         for string in SampleData.shared.sampleDataStrings {
             self.encodeDecode(string)
+        }
+    }
+    
+    func testDates() {
+        for date in SampleData.shared.sampleDataDates {
+            self.encodeDecode(date)
+            self.encodeDecode(date)
         }
     }
     

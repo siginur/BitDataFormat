@@ -117,9 +117,6 @@ final class BDFCodableContainerCoverageTests: XCTestCase {
         let subclass = Subclass()
         subclass.id = "id-value"
         subclass.name = "name-value"
-        
-        print(try! String(data: JSONEncoder().encode(subclass), encoding: .utf8))
-        
         encodeDecode(subclass)
     }
     

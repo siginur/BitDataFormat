@@ -8,11 +8,11 @@
 import SMBitData
 
 extension SMBitDataWriter {
-    func writeTypeSignature(_ type: BitDataType) {
+    func writeDataTypeSignature(_ type: BitDataType) {
         self.writeBits(type.bits, count: BitDataType.sizeInBits)
     }
     
-    func writeTypeSignature(_ type: BitDataSubType) {
+    func writeDataSubTypeSignature(_ type: BitDataSubType) {
         self.writeBits(type.bits, count: type.sizeInBits)
     }
     
@@ -62,5 +62,28 @@ extension SMBitDataReader {
         let bits = try self.readBits(dataType.subTypeSizeInBits)
         return BitDataSubType(type: dataType, bits: bits)
     }
-
+    
+    func readUInt16() throws -> UInt16 {
+        let highByte = try self.readByte()
+        let lowByte = try self.readByte()
+        return (UInt16(highByte) << 8) | UInt16(lowByte)
+    }
+    
+    func readUInt24() throws -> UInt32 {
+        let bytes = try self.readBytes(3)
+        return (UInt32(bytes[0]) << 16) | (UInt32(bytes[1]) << 8) | UInt32(bytes[2])
+    }
+    
+    func readUInt32() throws -> UInt32 {
+        let bytes = try self.readBytes(4)
+        return (UInt32(bytes[0]) << 24) | (UInt32(bytes[1]) << 16) | (UInt32(bytes[2]) << 8) | UInt32(bytes[3])
+    }
+    
+    func readUInt64() throws -> UInt64 {
+        let bytes = try self.readBytes(8)
+        return (UInt64(bytes[0]) << 56) | (UInt64(bytes[1]) << 48) |
+        (UInt64(bytes[2]) << 40) | (UInt64(bytes[3]) << 32) |
+        (UInt64(bytes[4]) << 24) | (UInt64(bytes[5]) << 16) |
+        (UInt64(bytes[6]) << 8) | UInt64(bytes[7])
+    }
 }

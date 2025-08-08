@@ -12,28 +12,28 @@ extension BDFSerialization {
     static func encode(object: Any?, includeType: Bool, to data: SMBitDataWriter) throws {
         guard let object else {
             if includeType {
-                data.writeTypeSignature(.primitive)
+                data.writeDataTypeSignature(.primitive)
             }
-            data.writeTypeSignature(.primitiveNull)
+            data.writeDataSubTypeSignature(.primitiveNull)
             return
         }
         switch object {
             // Primitive types
         case let v as Bool:
             if includeType {
-                data.writeTypeSignature(.primitive)
+                data.writeDataTypeSignature(.primitive)
             }
-            data.writeTypeSignature(v == true ? .primitiveTrue : .primitiveFalse)
+            data.writeDataSubTypeSignature(v == true ? .primitiveTrue : .primitiveFalse)
         case _ as NSNull:
             if includeType {
-                data.writeTypeSignature(.primitive)
+                data.writeDataTypeSignature(.primitive)
             }
-            data.writeTypeSignature(.primitiveNull)
+            data.writeDataSubTypeSignature(.primitiveNull)
             
             // Number types
         case let v as Int:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             if v == Int64.min {
                 throw BitDataEncodingError.numberIsTooSmall
@@ -41,22 +41,22 @@ extension BDFSerialization {
             try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int8:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int16:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int32:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as Int64:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             if v == Int64.min {
                 throw BitDataEncodingError.numberIsTooSmall
@@ -64,73 +64,85 @@ extension BDFSerialization {
             try self.encode(number: UInt64(abs(Int(v))), isPositive: v >= 0, to: data)
         case let v as UInt:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(v), isPositive: true, to: data)
         case let v as UInt8:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(v), isPositive: true, to: data)
         case let v as UInt16:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(v), isPositive: true, to: data)
         case let v as UInt32:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: UInt64(v), isPositive: true, to: data)
         case let v as UInt64:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(number: v, isPositive: true, to: data)
         case let v as Float:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(digits: String(v), to: data)
         case let v as Double:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(digits: String(v), to: data)
         case let v as CGFloat:
             if includeType {
-                data.writeTypeSignature(.number)
+                data.writeDataTypeSignature(.number)
             }
             try self.encode(digits: String(Double(v)), to: data)
             
             // Strings
         case let v as String:
             if includeType {
-                data.writeTypeSignature(.string)
+                data.writeDataTypeSignature(.string)
             }
             try self.encode(string: v, to: data)
         case let v as NSString:
             if includeType {
-                data.writeTypeSignature(.string)
+                data.writeDataTypeSignature(.string)
             }
             try self.encode(string: v as String, to: data)
+            
+            // Dates
+        case let v as Date:
+            if includeType {
+                data.writeDataTypeSignature(.date)
+            }
+            try self.encode(date: v, to: data)
+        case let v as NSDate:
+            if includeType {
+                data.writeDataTypeSignature(.date)
+            }
+            try self.encode(date: v as Date, to: data)
             
             // Arrays
         case let v as [Any]:
             if includeType {
-                data.writeTypeSignature(.array)
+                data.writeDataTypeSignature(.array)
             }
             try self.encode(array: v, to: data)
         case let v as NSArray:
             if includeType {
-                data.writeTypeSignature(.array)
+                data.writeDataTypeSignature(.array)
             }
             try self.encode(array: v as Array, to: data)
             
             // Objects
         case let v as [String: Any]:
             if includeType {
-                data.writeTypeSignature(.dictionary)
+                data.writeDataTypeSignature(.dictionary)
             }
             try self.encode(dictionary: v, to: data)
             
@@ -143,28 +155,28 @@ extension BDFSerialization {
         let sign = isPositive == true ? BitDataConstants.Number.signPositive : BitDataConstants.Number.signNegative
         
         if number == 0 {
-            data.writeTypeSignature(.numberZero)
+            data.writeDataSubTypeSignature(.numberZero)
         }
         else if number <= BitDataConstants.Number.digitsMaxValue {
             try self.encode(digits: (isPositive ? "" : "-") + String(number), to: data)
         }
         else if number <= BitDataConstants.Number.bits16MaxValue {
-            data.writeTypeSignature(.number16Bits)
+            data.writeDataSubTypeSignature(.number16Bits)
             data.writeBit(sign)
             data.writeBytes(UInt16(number))
         }
         else if number <= BitDataConstants.Number.bits24MaxValue {
-            data.writeTypeSignature(.number24Bits)
+            data.writeDataSubTypeSignature(.number24Bits)
             data.writeBit(sign)
             data.writeUInt24(UInt32(number))
         }
         else if number <= BitDataConstants.Number.bits32MaxValue {
-            data.writeTypeSignature(.number32Bits)
+            data.writeDataSubTypeSignature(.number32Bits)
             data.writeBit(sign)
             data.writeBytes(UInt32(number))
         }
         else if number <= BitDataConstants.Number.bits64MaxValue {
-            data.writeTypeSignature(.number64Bits)
+            data.writeDataSubTypeSignature(.number64Bits)
             data.writeBit(sign)
             data.writeBytes(UInt64(number))
         }
@@ -174,13 +186,13 @@ extension BDFSerialization {
     }
     
     static func encode(digits string: String, to data: SMBitDataWriter) throws {
-        data.writeTypeSignature(.numberDigits)
+        data.writeDataSubTypeSignature(.numberDigits)
         return try self.encode(string: string, with: BitDataConstants.Number.digitsAlphabet, to: data)
     }
     
     static func encode(string: String, to data: SMBitDataWriter) throws {
         guard string.isEmpty == false else {
-            data.writeTypeSignature(.stringEmpty)
+            data.writeDataSubTypeSignature(.stringEmpty)
             return
         }
         
@@ -206,7 +218,7 @@ extension BDFSerialization {
         
         guard let (dataSubType, alphabet) = match else {
             // UTF8 encoding
-            data.writeTypeSignature(.stringUTF8)
+            data.writeDataSubTypeSignature(.stringUTF8)
             guard let stringData = string.data(using: .utf8) else {
                 throw BitDataEncodingError.failedToEncodeUTF8String(string)
             }
@@ -234,7 +246,7 @@ extension BDFSerialization {
             return
         }
         
-        data.writeTypeSignature(dataSubType)
+        data.writeDataSubTypeSignature(dataSubType)
         try self.encode(string: string, with: alphabet, to: data)
     }
     
@@ -248,6 +260,23 @@ extension BDFSerialization {
             }
         }
         data.writeBits(alphabet.closeCharacter, count: alphabet.closeCharacterSizeInBits)
+    }
+    
+    static func encode(date: Date, to data: SMBitDataWriter) throws {
+        let timestamp = date.timeIntervalSince1970
+        let millis = timestamp.truncatingRemainder(dividingBy: 100)
+        if millis == 0 {
+            data.writeDataSubTypeSignature(BitDataSubType.dateInSeconds)
+            let timestamp = UInt32(timestamp)
+            data.writeBytes(timestamp)
+        }
+        else {
+            data.writeDataSubTypeSignature(BitDataSubType.dateInMilliseconds)
+            let timestamp = UInt64(timestamp * 1000)
+            data.writeBytes(UInt32(timestamp >> 10))
+            data.writeByte(UInt8((timestamp & 0x3FC) >> 2))
+            data.writeBits(UInt8(timestamp & 0x3), count: 2)
+        }
     }
     
     static func encode(array: [Any], to data: SMBitDataWriter) throws {
@@ -270,7 +299,7 @@ extension BDFSerialization {
                 guard let type = BitDataType(object: value) else {
                     throw BitDataEncodingError.unsupportedType(type(of: value))
                 }
-                data.writeTypeSignature(type)
+                data.writeDataTypeSignature(type)
             }
             try self.encode(object: value, includeType: !sameValueType && index > 0, to: data)
             if useSeparator {
@@ -296,22 +325,22 @@ extension BDFSerialization {
         
         switch count {
         case 0:
-            data.writeTypeSignature(.collectionEmpty)
+            data.writeDataSubTypeSignature(.collectionEmpty)
         case 1:
-            data.writeTypeSignature(.collectionSingle)
+            data.writeDataSubTypeSignature(.collectionSingle)
         case 2...BitDataConstants.Collection.maxSizeForUsingSeparator:
-            data.writeTypeSignature(.collectionSeparator)
+            data.writeDataSubTypeSignature(.collectionSeparator)
             data.writeBit(sameValueType == true ? BitDataConstants.Collection.sameValueType : BitDataConstants.Collection.differentValueTypes)
         case 9..<256:
-            data.writeTypeSignature(.collection8BitsSize)
+            data.writeDataSubTypeSignature(.collection8BitsSize)
             data.writeByte(UInt8(count))
             data.writeBit(sameValueType == true ? BitDataConstants.Collection.sameValueType : BitDataConstants.Collection.differentValueTypes)
         case 256..<4096:
-            data.writeTypeSignature(.collection12BitsSize)
+            data.writeDataSubTypeSignature(.collection12BitsSize)
             data.writeUInt12(UInt16(count))
             data.writeBit(sameValueType == true ? BitDataConstants.Collection.sameValueType : BitDataConstants.Collection.differentValueTypes)
         case 4096..<65536:
-            data.writeTypeSignature(.collection16BitsSize)
+            data.writeDataSubTypeSignature(.collection16BitsSize)
             data.writeBytes(UInt16(count))
             data.writeBit(sameValueType == true ? BitDataConstants.Collection.sameValueType : BitDataConstants.Collection.differentValueTypes)
         default:

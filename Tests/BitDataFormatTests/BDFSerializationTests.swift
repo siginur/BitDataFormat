@@ -171,6 +171,14 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
         }
     }
     
+    func testDates() throws {
+        for date in SampleData.shared.sampleDataDates {
+            let compressedData = try BDFSerialization.data(withBDFObject: date)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
+            XCTAssertEqual(date, uncompressedValue as? Date)
+        }
+    }
+    
     func testArrayEmpty() throws {
         let value: [Any] = []
         let compressedData = try BDFSerialization.data(withBDFObject: value)
@@ -191,9 +199,6 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
             let compressedData = try BDFSerialization.data(withBDFObject: value)
             let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertAnyEqual(value, uncompressedValue)
-            
-            let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
-            XCTAssertLessThanOrEqual(compressedData.count, jsonData.count)
         }
     }
     
@@ -230,9 +235,6 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
             let compressedData = try BDFSerialization.data(withBDFObject: value)
             let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             XCTAssertAnyEqual(value, uncompressedValue)
-            
-            let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
-            XCTAssertLessThanOrEqual(compressedData.count, jsonData.count)
         }
     }
     

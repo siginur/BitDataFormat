@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  SampleData.swift
 //  BitDataFormat
 //
 //  Created by Alexey Siginur on 07/08/2025.
@@ -19,6 +19,7 @@ struct SampleData {
     let sampleDataPrimitives: [Any]
     let sampleDataNumbers: [Any]
     let sampleDataStrings: [String]
+    let sampleDataDates: [Date]
     let allTypes: [Any]
     
     private init() {
@@ -60,6 +61,11 @@ struct SampleData {
             Self.generateString(maxByteSize: 65535, characters: hebrewCharacters)
         ]
         
+        let sampleDataDates: [Date] = [
+            Date(timeIntervalSince1970: 1_123_456),
+            Date(timeIntervalSince1970: 6_543_210.847)
+        ]
+        
         self.latinCharacters = latinCharacters
         self.greekCharacters = greekCharacters
         self.chineseCharacters = chineseCharacters
@@ -68,10 +74,12 @@ struct SampleData {
         self.sampleDataPrimitives = sampleDataPrimitives
         self.sampleDataNumbers = sampleDataNumbers
         self.sampleDataStrings = sampleDataStrings
+        self.sampleDataDates = sampleDataDates
         self.allTypes = [
             sampleDataPrimitives,
             sampleDataNumbers,
             sampleDataStrings,
+            sampleDataDates,
             [[Any]()],
             [[String: Any]()]
         ].reduce([], +)
