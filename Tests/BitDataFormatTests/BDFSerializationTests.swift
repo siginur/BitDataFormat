@@ -100,7 +100,7 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
         }
     }
     
-    @available(macOS 15.0, *)
+    @available(iOS 18.0, watchOS 11.0, macOS 15.0, macCatalyst 18.0, tvOS 18.0, visionOS 2.0, *)
     func testNumber64Bits() throws {
         let min = Int128(BitDataConstants.Number.bits32MaxValue) + 1
         let max = Int128(BitDataConstants.Number.bits64MaxValue)
@@ -268,7 +268,7 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
         }
     }
     
-    @available(macOS 15.0, *)
+    @available(iOS 18.0, watchOS 11.0, macOS 15.0, macCatalyst 18.0, tvOS 18.0, visionOS 2.0, *)
     private func testNumberInRange(min: Int128, max: Int128) throws {
         let middle = (max - min) / 2
         let positiveValues: [Int128] = [min, min + 1, min + 2, middle - 1, middle, middle + 1, max - 2, max - 1, max]

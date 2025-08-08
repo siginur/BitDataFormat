@@ -41,7 +41,7 @@ class BDFSingleValueDecodingContainer: SingleValueDecodingContainer, BDFDecoderC
         return Int(value)
     }
     
-    @available(macOS 15.0, *)
+    @available(iOS 18.0, watchOS 11.0, macOS 15.0, macCatalyst 18.0, tvOS 18.0, visionOS 2.0, *)
     func decode(_ type: Int128.Type) throws -> Int128 {
         guard let storage = self.decoder?.storage else {
             throw BitDataDecodingError.missingDecoder
@@ -52,7 +52,7 @@ class BDFSingleValueDecodingContainer: SingleValueDecodingContainer, BDFDecoderC
         return Int128(value)
     }
     
-    @available(macOS 15.0, *)
+    @available(iOS 18.0, watchOS 11.0, macOS 15.0, macCatalyst 18.0, tvOS 18.0, visionOS 2.0, *)
     func decode(_ type: UInt128.Type) throws -> UInt128 {
         guard let storage = self.decoder?.storage else {
             throw BitDataDecodingError.missingDecoder
@@ -117,7 +117,7 @@ class BDFSingleValueDecodingContainer: SingleValueDecodingContainer, BDFDecoderC
             break
         }
         
-        if #available(macOS 15.0, *) {
+        if #available(iOS 18.0, watchOS 11.0, macOS 15.0, macCatalyst 18.0, tvOS 18.0, visionOS 2.0, *) {
             if T.self is Int128.Type {
                 if let value = storage as? (any BinaryInteger) {
                     return Int128(value) as! T

@@ -35,7 +35,7 @@ final class BDFEncoderBDFDecoderTests: XCTestCase {
         self.encodeDecode(-Int(BitDataConstants.Number.bits16MaxValue))
         self.encodeDecode(-BitDataConstants.Number.bits24MaxValue)
         self.encodeDecode(-Int(BitDataConstants.Number.bits32MaxValue))
-//        if #available(macOS 15.0, *) {
+//        if #available(iOS 18.0, watchOS 11.0, macOS 15.0, macCatalyst 18.0, tvOS 18.0, visionOS 2.0, *) {
 //            self.encodeDecode(-Int128(BitDataConstants.Number.bits64MaxValue))
 //        }
     }
