@@ -64,10 +64,10 @@ class BDFKeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol,
     }
     
     func superDecoder() throws -> any Decoder {
-        guard let value = self.storage["super"] else {
-            throw BitDataDecodingError.keyNotFound
-        }
-        let superDecoder = _BDFDecoder(storage: value, codingPath: self.codingPath + [BitDataCodingKey.key("super")], userInfo: decoder?.userInfo ?? [:])
+//        guard let value = self.storage["super"] else {
+//            throw BitDataDecodingError.keyNotFound
+//        }
+        let superDecoder = _BDFDecoder(storage: self.storage, codingPath: self.codingPath, userInfo: decoder?.userInfo ?? [:])
         return superDecoder
     }
     

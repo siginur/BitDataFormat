@@ -110,7 +110,6 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
         let listOfValues: [Any] = (negativeValues + positiveValues).sorted().compactMap({ Int(String($0)) ?? UInt(String($0)) })
         
         for value in listOfValues {
-            print(value)
             let compressedData = try BDFSerialization.data(withBDFObject: value)
             let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
             if let intValue = uncompressedValue as? Int {

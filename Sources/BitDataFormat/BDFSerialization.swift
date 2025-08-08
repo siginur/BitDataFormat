@@ -17,10 +17,6 @@ public class BDFSerialization {
     /// Returns a Foundation object from given BDF encoded data.
     public static func bdfObject(with data: Data) throws -> Any {
         let data = SMBitDataReader(data: data)
-        let dataVersion = try data.readBits(BitDataConstants.currentVresionSizeInBits) // Version
-        guard dataVersion <= BitDataConstants.currentVresion else {
-            throw BitDataDecodingError.unsupportedVersion
-        }
         return try self.decode(from: data, as: nil)
     }
     
@@ -34,7 +30,6 @@ public class BDFSerialization {
 extension BDFSerialization {
     static func dataWithStats(withBDFObject object: Any?) throws -> (bits: UInt64, data: Data) {
         let data = SMBitDataWriter()
-        data.writeBits(BitDataConstants.currentVresion, count: BitDataConstants.currentVresionSizeInBits) // Version
         try self.encode(object: object, includeType: true, to: data) // Content
         return (data.sizeInBits, data.data)
     }

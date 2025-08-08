@@ -7,8 +7,6 @@
 
 /// Errors that can occur while decoding BitDataFormat data.
 public enum BitDataDecodingError: Error {
-    /// The version of the encoded format is not supported.
-    case unsupportedVersion
     /// Unknown encoded data type.
     case unknownBitDataType
     /// Unknown encoded data sub-type.
@@ -21,8 +19,10 @@ public enum BitDataDecodingError: Error {
     case numberIsTooBig
     /// The encoded data is not a valid number.
     case failedToDecodeNumber(String)
-    
+    /// Expected and actual types do not match.
     case typeMissmatch
+    /// The decoder is missing.
     case missingDecoder
+    /// The key is not found in the encoded data.
     case keyNotFound
 }

@@ -6,9 +6,6 @@
 //
 
 struct BitDataConstants {
-
-    static let currentVresionSizeInBits: UInt8 = 2
-    static let currentVresion: UInt8 = 0
     
     struct Boolean {
         static let `true`: UInt8 = 1
