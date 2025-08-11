@@ -114,25 +114,16 @@ class BDFSingleValueDecodingContainer: SingleValueDecodingContainer, BDFDecoderC
                 return UInt64(value) as! T
             }
         case is Float.Type:
-            if let value = storage as? Float {
+            if let value = Float(fromAny: storage) {
                 return value as! T
             }
-            else if let value = storage as? Double {
-                return Float(value) as! T
-            }
         case is Double.Type:
-            if let value = storage as? Double {
+            if let value = Double(fromAny: storage) {
                 return value as! T
             }
         case is CGFloat.Type:
-            if let value = storage as? CGFloat {
+            if let value = CGFloat(fromAny: storage) {
                 return value as! T
-            }
-            else if let value = storage as? Double {
-                return CGFloat(value) as! T
-            }
-            else if let value = storage as? Float {
-                return CGFloat(value) as! T
             }
         default:
             break

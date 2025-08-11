@@ -215,24 +215,27 @@ class _BDFSchemaDecoder: BDFSchemaDecoder {
     }
     
     func decode() throws -> Float {
-        guard let rawValue = try BDFSerialization.decodeNumber(from: self.data, as: nil) as? Double else {
+        let rawValue = try BDFSerialization.decodeNumber(from: self.data, as: nil)
+        guard let value = Float(fromAny: rawValue) else {
             throw BitDataDecodingError.typeMissmatch
         }
-        return Float(rawValue)
+        return value
     }
     
     func decode() throws -> Double {
-        guard let value = try BDFSerialization.decodeNumber(from: self.data, as: nil) as? Double else {
+        let rawValue = try BDFSerialization.decodeNumber(from: self.data, as: nil)
+        guard let value = Double(fromAny: rawValue) else {
             throw BitDataDecodingError.typeMissmatch
         }
         return value
     }
     
     func decode() throws -> CGFloat {
-        guard let value = try BDFSerialization.decodeNumber(from: self.data, as: nil) as? Double else {
+        let rawValue = try BDFSerialization.decodeNumber(from: self.data, as: nil)
+        guard let value = CGFloat(fromAny: rawValue) else {
             throw BitDataDecodingError.typeMissmatch
         }
-        return CGFloat(value)
+        return value
     }
     
     func decode() throws -> String {
@@ -297,15 +300,33 @@ class _BDFSchemaDecoder: BDFSchemaDecoder {
     }
     
     func decode() throws -> [Float] {
-        try self.decodeArray(Double.self) { Float($0) }
+        let rawArray = try BDFSerialization.decodeArray(from: self.data, as: nil)
+        return try rawArray.map { rawValue in
+            guard let value = Float(fromAny: rawValue) else {
+                throw BitDataDecodingError.typeMissmatch
+            }
+            return value
+        }
     }
     
     func decode() throws -> [Double] {
-        try self.decodeArray()
+        let rawArray = try BDFSerialization.decodeArray(from: self.data, as: nil)
+        return try rawArray.map { rawValue in
+            guard let value = Double(fromAny: rawValue) else {
+                throw BitDataDecodingError.typeMissmatch
+            }
+            return value
+        }
     }
     
     func decode() throws -> [CGFloat] {
-        try self.decodeArray(Double.self) { CGFloat($0) }
+        let rawArray = try BDFSerialization.decodeArray(from: self.data, as: nil)
+        return try rawArray.map { rawValue in
+            guard let value = CGFloat(fromAny: rawValue) else {
+                throw BitDataDecodingError.typeMissmatch
+            }
+            return value
+        }
     }
     
     func decode() throws -> [String] {
@@ -370,15 +391,33 @@ class _BDFSchemaDecoder: BDFSchemaDecoder {
     }
     
     func decode() throws -> [String: Float] {
-        try self.decodeDictionary(Double.self) { Float($0) }
+        let rawDictionary = try BDFSerialization.decodeDictionary(from: self.data, as: nil)
+        return try rawDictionary.mapValues { rawValue in
+            guard let value = Float(fromAny: rawValue) else {
+                throw BitDataDecodingError.typeMissmatch
+            }
+            return value
+        }
     }
     
     func decode() throws -> [String: Double] {
-        try self.decodeDictionary()
+        let rawDictionary = try BDFSerialization.decodeDictionary(from: self.data, as: nil)
+        return try rawDictionary.mapValues { rawValue in
+            guard let value = Double(fromAny: rawValue) else {
+                throw BitDataDecodingError.typeMissmatch
+            }
+            return value
+        }
     }
     
     func decode() throws -> [String: CGFloat] {
-        try self.decodeDictionary(Double.self) { CGFloat($0) }
+        let rawDictionary = try BDFSerialization.decodeDictionary(from: self.data, as: nil)
+        return try rawDictionary.mapValues { rawValue in
+            guard let value = CGFloat(fromAny: rawValue) else {
+                throw BitDataDecodingError.typeMissmatch
+            }
+            return value
+        }
     }
     
     func decode() throws -> [String: String] {

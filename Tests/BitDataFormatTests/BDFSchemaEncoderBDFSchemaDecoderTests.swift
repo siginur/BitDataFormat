@@ -24,7 +24,7 @@ final class BDFSchemaEncoderBDFSchemaDecoderTests: XCTestCase {
             uint32: 9,
             uint64: 10,
             float: 11.12,
-            double: 13.14,
+            double: 13.1446534564,
             string: "string",
             date: .init(timeIntervalSince1970: 1_000_000),
             enum: .value1,
@@ -43,7 +43,7 @@ final class BDFSchemaEncoderBDFSchemaDecoderTests: XCTestCase {
                 uint32: [33, 34, 35, 36, 37, 38],
                 uint64: [39, 40, 41, 42, 43, 44, 45],
                 float: [46.47, 48.49],
-                double: [50.51, 52.53, 54.55],
+                double: [50.553451, 52.534534635, 54.5123125],
                 string: ["string1", "string2", "string3"],
                 date: [.init(timeIntervalSince1970: 1_000_000.123), .init(timeIntervalSince1970: 2_000_000)],
                 enum: [.value1, .value2]
@@ -61,7 +61,7 @@ final class BDFSchemaEncoderBDFSchemaDecoderTests: XCTestCase {
                 uint32: ["key35": 33, "key36": 34, "key37": 35, "key38": 36, "key39": 37, "key40": 38],
                 uint64: ["key41": 39, "key42": 40, "key43": 41, "key44": 42, "key45": 41, "key46": 42, "key47": 43, "key48": 44, "key49": 45],
                 float: ["key50": 46.47, "key51": 48.49],
-                double: ["key52": 50.51, "key53": 52.53, "key54": 54.55],
+                double: ["key52": 50.5453451, "key53": 52.51231233, "key54": 54.555435],
                 string: ["key55": "string1", "key56": "string2", "key57": "string3"],
                 date: ["key58": .init(timeIntervalSince1970: 1_000_000), "key59": .init(timeIntervalSince1970: 2_000_000.5)],
                 enum: ["key60": .value1, "key61": .value2]

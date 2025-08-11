@@ -110,6 +110,12 @@ extension BDFSerialization {
             else {
                 throw BitDataDecodingError.numberIsTooBig
             }
+        case .numberFloat:
+            let rawValue = try data.readUInt32()
+            return Float(bitPattern: rawValue)
+        case .numberDouble:
+            let rawValue = try data.readUInt64()
+            return Double(bitPattern: rawValue)
         default:
             throw BitDataDecodingError.unknownBitDataSubType
         }

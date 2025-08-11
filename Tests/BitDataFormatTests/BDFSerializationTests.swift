@@ -127,6 +127,60 @@ final class BDFSerializationTests: XCTestCase, @unchecked Sendable {
         }
     }
     
+    func testNumberFloat() throws {
+        let lostOfValues: [Float] = [
+            0,
+            1243.43253,
+            324.234234,
+            -123.423423,
+            123.4234234,
+            -123.4234234,
+            3.14159,
+            -3.14159,
+        ]
+        
+        for value in lostOfValues {
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
+            if value != 0 {
+                XCTAssertEqual(value, uncompressedValue as? Float)
+            }
+            else {
+                XCTAssertEqual(Int(value), uncompressedValue as? Int)
+            }
+            
+            let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
+            XCTAssertLessThanOrEqual(compressedData.count, jsonData.count)
+        }
+    }
+    
+    func testNumberDouble() throws {
+        let lostOfValues: [Double] = [
+            0,
+            54.12344532345,
+            324.234234,
+            -123.423423,
+            123.4234234,
+            -123.4234234,
+            3.14159542,
+            -3.14159435,
+        ]
+        
+        for value in lostOfValues {
+            let compressedData = try BDFSerialization.data(withBDFObject: value)
+            let uncompressedValue = try BDFSerialization.bdfObject(with: compressedData)
+            if value != 0 {
+                XCTAssertEqual(value, uncompressedValue as? Double)
+            }
+            else {
+                XCTAssertEqual(Int(value), uncompressedValue as? Int)
+            }
+            
+            let jsonData = try JSONSerialization.data(withJSONObject: value as Any, options: [.fragmentsAllowed])
+            XCTAssertLessThanOrEqual(compressedData.count, jsonData.count)
+        }
+    }
+    
     func testStringEmpty() throws {
         let value = ""
         let compressedData = try BDFSerialization.data(withBDFObject: value)

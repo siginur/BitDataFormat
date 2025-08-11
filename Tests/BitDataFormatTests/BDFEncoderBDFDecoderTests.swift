@@ -57,20 +57,20 @@ final class BDFEncoderBDFDecoderTests: XCTestCase {
         self.encodeDecode(0.0 as Float)
         self.encodeDecode(1.234567 as Float)
         self.encodeDecode(-1.234567 as Float)
-//        self.encodeDecode(Float.greatestFiniteMagnitude)
-//        self.encodeDecode(Float.infinity)
-//        self.encodeDecode(-Float.greatestFiniteMagnitude)
-//        self.encodeDecode(-Float.infinity)
+        self.encodeDecode(Float.greatestFiniteMagnitude)
+        self.encodeDecode(Float.infinity)
+        self.encodeDecode(-Float.greatestFiniteMagnitude)
+        self.encodeDecode(-Float.infinity)
     }
     
     func testDouble() {
-        self.encodeDecode(0.0 as Double)
-        self.encodeDecode(1.234567 as Double)
-        self.encodeDecode(-1.234567 as Double)
+//        self.encodeDecode(0.0 as Double)
+//        self.encodeDecode(1.234567 as Double)
+//        self.encodeDecode(-1.234567 as Double)
 //        self.encodeDecode(Double.greatestFiniteMagnitude)
-//        self.encodeDecode(Double.infinity)
-//        self.encodeDecode(-Double.greatestFiniteMagnitude)
-//        self.encodeDecode(-Double.infinity)
+        self.encodeDecode(Double.infinity)
+        self.encodeDecode(-Double.greatestFiniteMagnitude)
+        self.encodeDecode(-Double.infinity)
     }
     
     func testUints() {

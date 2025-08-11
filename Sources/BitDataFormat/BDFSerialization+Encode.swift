@@ -31,26 +31,11 @@ extension BDFSerialization {
             data.writeDataSubTypeSignature(.primitiveNull)
             
             // Number types
-        case _ as Int, _ as Int8, _ as Int16, _ as Int32, _ as Int64, _ as UInt, _ as UInt8, _ as UInt16, _ as UInt32, _ as UInt64:
+        case _ as Int, _ as Int8, _ as Int16, _ as Int32, _ as Int64, _ as UInt, _ as UInt8, _ as UInt16, _ as UInt32, _ as UInt64, _ as Float, _ as Double, _ as CGFloat:
             if includeType {
                 data.writeDataTypeSignature(.number)
             }
             try self.encode(number: object, to: data)
-        case let v as Float:
-            if includeType {
-                data.writeDataTypeSignature(.number)
-            }
-            try self.encode(digits: String(v), to: data)
-        case let v as Double:
-            if includeType {
-                data.writeDataTypeSignature(.number)
-            }
-            try self.encode(digits: String(v), to: data)
-        case let v as CGFloat:
-            if includeType {
-                data.writeDataTypeSignature(.number)
-            }
-            try self.encode(digits: String(Double(v)), to: data)
             
             // Strings
         case let v as String:
@@ -129,18 +114,11 @@ extension BDFSerialization {
         case let v as UInt64:
             try self.encode(number: v, isPositive: true, to: data)
         case let v as Float:
-//            let numberFormatter = NumberFormatter()
-//            numberFormatter.maximumFractionDigits = 7
-//            try self.encode(digits: numberFormatter.string(from: NSNumber(value: v)) ?? String(v), to: data)
-            try self.encode(digits: String(v), to: data)
+            try self.encode(float: v, to: data)
         case let v as Double:
-            let numberFormatter = NumberFormatter()
-            numberFormatter.maximumFractionDigits = .max
-            try self.encode(digits: numberFormatter.string(from: NSNumber(value: v)) ?? String(v), to: data)
+            try self.encode(double: v, to: data)
         case let v as CGFloat:
-            let numberFormatter = NumberFormatter()
-            numberFormatter.maximumFractionDigits = .max
-            try self.encode(digits: numberFormatter.string(from: NSNumber(value: v)) ?? String(Double(v)), to: data)
+            try self.encode(double: Double(v), to: data)
         default:
             throw BitDataEncodingError.unsupportedSubType
         }
@@ -183,6 +161,33 @@ extension BDFSerialization {
     static func encode(digits string: String, to data: SMBitDataWriter) throws {
         data.writeDataSubTypeSignature(.numberDigits)
         return try self.encode(string: string, with: BitDataConstants.Number.digitsAlphabet, to: data)
+    }
+    
+    static func encode(float: Float, to data: SMBitDataWriter) throws {
+        guard float.isZero == false else {
+            data.writeDataSubTypeSignature(.numberZero)
+            return
+        }
+        data.writeDataSubTypeSignature(.numberFloat)
+        data.writeBytes(float.bitPattern)
+    }
+    
+    static func encode(double: Double, to data: SMBitDataWriter) throws {
+        guard double.isZero == false else {
+            data.writeDataSubTypeSignature(.numberZero)
+            return
+        }
+        
+        // Try to convert to Float
+        let float = Float(double)
+        if Double(float) == double {
+            try self.encode(float: float, to: data)
+            return
+        }
+        
+        // Write
+        data.writeDataSubTypeSignature(.numberDouble)
+        data.writeBytes(double.bitPattern)
     }
     
     static func encode(string: String, to data: SMBitDataWriter) throws {

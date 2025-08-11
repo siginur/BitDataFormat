@@ -37,7 +37,7 @@ enum BitDataType {
         case .primitive:
             return [.primitiveNull, .primitiveTrue, .primitiveFalse]
         case .number:
-            return [.numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits]
+            return [.numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits, .numberFloat, .numberDouble]
         case .string:
             return [.stringEmpty, .stringDigits, .stringLowercased, .stringUppercased, .stringCombined, .stringASCII, .stringUTF8]
         case .date:
@@ -107,6 +107,8 @@ enum BitDataSubType {
     case number24Bits
     case number32Bits
     case number64Bits
+    case numberFloat
+    case numberDouble
     case stringEmpty
     case stringDigits
     case stringLowercased
@@ -127,7 +129,7 @@ enum BitDataSubType {
         switch self {
         case .primitiveNull, .primitiveTrue, .primitiveFalse:
             return 2
-        case .numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits:
+        case .numberZero, .numberDigits, .number16Bits, .number24Bits, .number32Bits, .number64Bits, .numberFloat, .numberDouble:
             return 3
         case .stringEmpty, .stringDigits, .stringLowercased, .stringUppercased, .stringCombined, .stringASCII, .stringUTF8:
             return 3
@@ -150,6 +152,8 @@ enum BitDataSubType {
         case .number24Bits: 3 // 011
         case .number32Bits: 4 // 100
         case .number64Bits: 5 // 101
+        case .numberFloat: 6 // 110
+        case .numberDouble: 7 // 111
         //case .numberReserved
         //case .numberReserved
         case .stringEmpty: 0 // 000
@@ -190,6 +194,8 @@ enum BitDataSubType {
             case 3: self = .number24Bits
             case 4: self = .number32Bits
             case 5: self = .number64Bits
+            case 6: self = .numberFloat
+            case 7: self = .numberDouble
             default: return nil
             }
         case .string:
