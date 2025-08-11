@@ -9,6 +9,8 @@
 public enum BitDataEncodingError: Error {
     /// The type of the object is not supported.
     case unsupportedType(Any.Type)
+    /// The subtype of the object is not supported.
+    case unsupportedSubType
     /// The character is not found in the alphabet.
     case characterNotFoundInAlphabet(Character)
     /// The string cannot be encoded as UTF8.

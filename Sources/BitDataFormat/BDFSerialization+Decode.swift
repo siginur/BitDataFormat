@@ -22,8 +22,7 @@ extension BDFSerialization {
             dataType = dt
         }
         
-        let bits = try data.readBits(dataType.subTypeSizeInBits)
-        guard let dataSubType = BitDataSubType(type: dataType, bits: bits) else {
+        guard let dataSubType = try data.readDataSubTypeSignature(for: dataType) else {
             throw BitDataDecodingError.unknownBitDataSubType
         }
         
@@ -43,7 +42,18 @@ extension BDFSerialization {
         }
     }
     
-    static func decodePrimitive(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> Any {
+    static func decodePrimitive(from data: SMBitDataReader, as predefinedDataSubType: BitDataSubType?) throws -> Any {
+        let dataSubType: BitDataSubType
+        if let predefinedDataSubType {
+            dataSubType = predefinedDataSubType
+        }
+        else {
+            guard let dst = try data.readDataSubTypeSignature(for: .primitive) else {
+                throw BitDataDecodingError.unknownBitDataSubType
+            }
+            dataSubType = dst
+        }
+        
         switch dataSubType {
         case .primitiveNull:
             return NSNull()
@@ -56,7 +66,18 @@ extension BDFSerialization {
         }
     }
     
-    static func decodeNumber(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> Any {
+    static func decodeNumber(from data: SMBitDataReader, as predefinedDataSubType: BitDataSubType?) throws -> Any {
+        let dataSubType: BitDataSubType
+        if let predefinedDataSubType {
+            dataSubType = predefinedDataSubType
+        }
+        else {
+            guard let dst = try data.readDataSubTypeSignature(for: .number) else {
+                throw BitDataDecodingError.unknownBitDataSubType
+            }
+            dataSubType = dst
+        }
+        
         switch dataSubType {
         case .numberZero:
             return 0
@@ -114,11 +135,10 @@ extension BDFSerialization {
             dataSubType = predefinedDataSubType
         }
         else {
-            let bits = try data.readBits(BitDataType.string.subTypeSizeInBits)
-            guard let dt = BitDataSubType(type: .string, bits: bits) else {
+            guard let dst = try data.readDataSubTypeSignature(for: .string) else {
                 throw BitDataDecodingError.unknownBitDataSubType
             }
-            dataSubType = dt
+            dataSubType = dst
         }
         
         switch dataSubType {
@@ -187,7 +207,18 @@ extension BDFSerialization {
         return string
     }
     
-    static func decodeDate(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> Date {
+    static func decodeDate(from data: SMBitDataReader, as predefinedDataSubType: BitDataSubType?) throws -> Date {
+        let dataSubType: BitDataSubType
+        if let predefinedDataSubType {
+            dataSubType = predefinedDataSubType
+        }
+        else {
+            guard let dst = try data.readDataSubTypeSignature(for: .date) else {
+                throw BitDataDecodingError.unknownBitDataSubType
+            }
+            dataSubType = dst
+        }
+        
         switch dataSubType {
         case .dateInSeconds:
             let seconds = try data.readUInt32()
@@ -203,7 +234,18 @@ extension BDFSerialization {
         }
     }
     
-    static func decodeArray(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> [Any] {
+    static func decodeArray(from data: SMBitDataReader, as predefinedDataSubType: BitDataSubType?) throws -> [Any] {
+        let dataSubType: BitDataSubType
+        if let predefinedDataSubType {
+            dataSubType = predefinedDataSubType
+        }
+        else {
+            guard let dst = try data.readDataSubTypeSignature(for: .array) else {
+                throw BitDataDecodingError.unknownBitDataSubType
+            }
+            dataSubType = dst
+        }
+        
         guard dataSubType != .collectionEmpty else {
             return []
         }
@@ -245,7 +287,18 @@ extension BDFSerialization {
         return array
     }
     
-    static func decodeDictionary(from data: SMBitDataReader, as dataSubType: BitDataSubType) throws -> [String: Any] {
+    static func decodeDictionary(from data: SMBitDataReader, as predefinedDataSubType: BitDataSubType?) throws -> [String: Any] {
+        let dataSubType: BitDataSubType
+        if let predefinedDataSubType {
+            dataSubType = predefinedDataSubType
+        }
+        else {
+            guard let dst = try data.readDataSubTypeSignature(for: .array) else {
+                throw BitDataDecodingError.unknownBitDataSubType
+            }
+            dataSubType = dst
+        }
+        
         guard dataSubType != .collectionEmpty else {
             return [:]
         }

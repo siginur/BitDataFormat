@@ -20,6 +20,7 @@ public class BDFSerialization {
         return try self.decode(from: data, as: nil)
     }
     
+    /// Returns a JSON string representation of the BDF encoded data.
     public static func json(with data: Data, options: JSONSerialization.WritingOptions = []) throws -> String? {
         let object = try self.bdfObject(with: data)
         let jsonData = try JSONSerialization.data(withJSONObject: object, options: options)
