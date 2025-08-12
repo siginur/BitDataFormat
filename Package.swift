@@ -33,7 +33,11 @@ let package = Package(
         .testTarget(
             name: "BitDataFormatTests",
             dependencies: ["BitDataFormat"],
-//            resources: [.copy("all.json")],
-        ),
+            resources: [
+                .copy("places.json"),
+                .copy("places_polygons.json"),
+                .copy("places_single.json")
+            ],
+        )
     ]
 )

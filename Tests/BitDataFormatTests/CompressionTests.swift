@@ -9,8 +9,10 @@ import XCTest
 @testable import BitDataFormat
 
 final class CompressionTests: XCTestCase {
+    
+    fileprivate let isCSV = false
 
-    func testExample() throws {
+    func testCompressionLevels() throws {
         // Primitives
         printStats(for: NSNull(), message: "null")
         printStats(for: true, message: "Boolean true")
@@ -66,6 +68,40 @@ final class CompressionTests: XCTestCase {
         prinStatsSeparator()
     }
     
+    func testCompareWithProtobuf() throws {
+        try self.protobufComparison(filename: "places", size: 578)
+        try self.protobufComparison(filename: "places_single", size: 27)
+        try self.protobufComparison(filename: "places_polygons", size: 176)
+    }
+    
+    // MARK: - Helper methods
+    
+    func protobufComparison(filename: String, size: Int) throws {
+        guard let fileURL = Bundle.module.url(forResource: filename, withExtension: "json") else {
+            XCTFail("Could not find \(filename).json in the test bundle")
+            return
+        }
+        let sourceData = try Data(contentsOf: fileURL)
+        let sourceObject = try JSONSerialization.jsonObject(with: sourceData)
+        let sourceClass = try JSONDecoder().decode(PlacesV2_Places.self, from: sourceData)
+        print("[Stats] \"\(filename)\" Source size:", sourceData.count)
+        print("[Stats] \"\(filename)\" Protobuf size:", size)
+
+        let serializedData = try BDFSerialization.data(withBDFObject: sourceObject)
+        let deserializedData = try BDFSerialization.bdfObject(with: serializedData)
+        XCTAssertAnyEqual(sourceObject, deserializedData)
+        print("[Stats] \"\(filename)\" Serialized size:", serializedData.count)
+
+        let encodedData = try BDFEncoder().encode(sourceClass)
+        let decodedClass = try BDFDecoder().decode(PlacesV2_Places.self, from: encodedData)
+        XCTAssertAnyEqual(sourceClass, decodedClass)
+        print("[Stats] \"\(filename)\" Encoded size:", encodedData.count)
+
+        let archivedData = try BDFArchiver().encode(sourceClass)
+        let unarchivedData = try BDFUnarchiver().decode(PlacesV2_Places.self, from: archivedData)
+        XCTAssertAnyEqual(sourceClass, unarchivedData)
+        print("[Stats] \"\(filename)\" Archived size:", archivedData.count)
+    }
     
     func printStats(for value: Any, message: String) {
         let (sizeInBits, encodedData) = try! BDFSerialization.dataWithStats(withBDFObject: value)
@@ -98,5 +134,3 @@ final class CompressionTests: XCTestCase {
     }
 
 }
-
-fileprivate let isCSV = true
