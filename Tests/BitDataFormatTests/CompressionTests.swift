@@ -97,8 +97,8 @@ final class CompressionTests: XCTestCase {
         XCTAssertAnyEqual(sourceClass, decodedClass)
         print("[Stats] \"\(filename)\" Encoded size:", encodedData.count)
 
-        let archivedData = try BDFArchiver().encode(sourceClass)
-        let unarchivedData = try BDFUnarchiver().decode(PlacesV2_Places.self, from: archivedData)
+        let archivedData = try BDFArchiver().pack(sourceClass)
+        let unarchivedData = try BDFUnarchiver().unpack(PlacesV2_Places.self, from: archivedData)
         XCTAssertAnyEqual(sourceClass, unarchivedData)
         print("[Stats] \"\(filename)\" Archived size:", archivedData.count)
     }

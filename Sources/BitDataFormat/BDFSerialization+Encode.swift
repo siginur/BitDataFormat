@@ -85,6 +85,10 @@ extension BDFSerialization {
         }
     }
     
+    static func encode(bool: Bool, to data: SMBitDataWriter) throws {
+        data.writeDataSubTypeSignature(bool == true ? .primitiveTrue : .primitiveFalse)
+    }
+    
     static func encode(number: Any, to data: SMBitDataWriter) throws {
         switch number {
         case let v as Int:

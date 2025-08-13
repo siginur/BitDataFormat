@@ -11,6 +11,8 @@ import SMBitData
 public class BDFEncoder {
     public var userInfo: [CodingUserInfoKey : Any] = [:]
     
+    public init() {}
+    
     public func encode(_ value: any Encodable) throws -> Data {
         let encoder = _BDFEncoder(codingPath: [], userInfo: userInfo)
         try value.encode(to: encoder)

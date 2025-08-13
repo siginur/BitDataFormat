@@ -7,18 +7,18 @@
 
 import BitDataFormat
 
-struct PlacesV2_Places: Codable, BDFSchemaCodable {
+struct PlacesV2_Places: Codable, BDFArchiveReadWritable {
     
     var places: [PlacesV2_Place] = []
     
     init() {}
     
-    init(from decoder: any BitDataFormat.BDFSchemaDecoder) throws {
-        self.places = try decoder.decode(PlacesV2_Place.self)
+    init(from decoder: any BitDataFormat.BDFArchiveReader) throws {
+        self.places = try decoder.read()
     }
     
-    func encode(to encoder: any BitDataFormat.BDFSchemaEncoder) throws {
-        try encoder.encode(self.places)
+    func write(to encoder: any BitDataFormat.BDFArchiveWriter) throws {
+        try encoder.write(self.places)
     }
     
     static func ==(lhs: PlacesV2_Places, rhs: PlacesV2_Places) -> Bool {
@@ -27,7 +27,7 @@ struct PlacesV2_Places: Codable, BDFSchemaCodable {
     }
 }
 
-struct PlacesV2_Place: Codable, BDFSchemaCodable, Equatable {
+struct PlacesV2_Place: Codable, BDFArchiveReadWritable, Equatable {
     
     var id: String = String()
     var name: String = String()
@@ -55,30 +55,30 @@ struct PlacesV2_Place: Codable, BDFSchemaCodable, Equatable {
     
     init() {}
     
-    init(from decoder: any BitDataFormat.BDFSchemaDecoder) throws {
-        self.id = try decoder.decode()
-        self.name = try decoder.decodeIfPresent() ?? ""
-        self.latitude = try decoder.decode()
-        self.longitude = try decoder.decode()
-        self.radius = try decoder.decodeIfPresent() ?? 0
-        self.geohash = try decoder.decode()
-        self.type = try decoder.decodeIfPresent() ?? ""
-        self.brandID = try decoder.decodeIfPresent() ?? ""
-        self.brandName = try decoder.decodeIfPresent() ?? ""
-        self._polygon = try decoder.decodeIfPresent(PlacesV2_Polygon.self)
+    init(from decoder: any BitDataFormat.BDFArchiveReader) throws {
+        self.id = try decoder.read()
+        self.name = try decoder.readIfPresent() ?? ""
+        self.latitude = try decoder.read()
+        self.longitude = try decoder.read()
+        self.radius = try decoder.readIfPresent() ?? 0
+        self.geohash = try decoder.read()
+        self.type = try decoder.readIfPresent() ?? ""
+        self.brandID = try decoder.readIfPresent() ?? ""
+        self.brandName = try decoder.readIfPresent() ?? ""
+        self._polygon = try decoder.readIfPresent()
     }
     
-    func encode(to encoder: any BitDataFormat.BDFSchemaEncoder) throws {
-        try encoder.encode(self.id)
-        self.name.isEmpty ? try encoder.encodeIfPresent(nil as String?) : try encoder.encode(self.name)
-        try encoder.encode(self.latitude)
-        try encoder.encode(self.longitude)
-        self.radius == 0 ? try encoder.encodeIfPresent(nil as Int32?) : try encoder.encode(self.radius)
-        try encoder.encode(self.geohash)
-        self.type.isEmpty ? try encoder.encodeIfPresent(nil as String?) : try encoder.encode(self.type)
-        self.brandID.isEmpty ? try encoder.encodeIfPresent(nil as String?) : try encoder.encode(self.brandID)
-        self.brandName.isEmpty ? try encoder.encodeIfPresent(nil as String?) : try encoder.encode(self.brandName)
-        try encoder.encodeIfPresent(self._polygon)
+    func write(to encoder: any BitDataFormat.BDFArchiveWriter) throws {
+        try encoder.write(self.id)
+        self.name.isEmpty ? try encoder.writeIfPresent(nil as String?) : try encoder.write(self.name)
+        try encoder.write(self.latitude)
+        try encoder.write(self.longitude)
+        self.radius == 0 ? try encoder.writeIfPresent(nil as Int32?) : try encoder.write(self.radius)
+        try encoder.write(self.geohash)
+        self.type.isEmpty ? try encoder.writeIfPresent(nil as String?) : try encoder.write(self.type)
+        self.brandID.isEmpty ? try encoder.writeIfPresent(nil as String?) : try encoder.write(self.brandID)
+        self.brandName.isEmpty ? try encoder.writeIfPresent(nil as String?) : try encoder.write(self.brandName)
+        try encoder.writeIfPresent(self._polygon)
     }
     
     static func ==(lhs: PlacesV2_Place, rhs: PlacesV2_Place) -> Bool {
@@ -96,18 +96,18 @@ struct PlacesV2_Place: Codable, BDFSchemaCodable, Equatable {
     }
 }
 
-struct PlacesV2_Polygon: Codable, BDFSchemaCodable, Equatable {
+struct PlacesV2_Polygon: Codable, BDFArchiveReadWritable, Equatable {
     
     var points: [PlacesV2_Point] = []
     
     init() {}
     
-    init(from decoder: any BitDataFormat.BDFSchemaDecoder) throws {
-        self.points = try decoder.decode(PlacesV2_Point.self)
+    init(from decoder: any BitDataFormat.BDFArchiveReader) throws {
+        self.points = try decoder.read()
     }
     
-    func encode(to encoder: any BitDataFormat.BDFSchemaEncoder) throws {
-        try encoder.encode(points)
+    func write(to encoder: any BitDataFormat.BDFArchiveWriter) throws {
+        try encoder.write(points)
     }
     
     static func ==(lhs: PlacesV2_Polygon, rhs: PlacesV2_Polygon) -> Bool {
@@ -116,21 +116,21 @@ struct PlacesV2_Polygon: Codable, BDFSchemaCodable, Equatable {
     }
 }
 
-struct PlacesV2_Point: Codable, BDFSchemaCodable, Equatable {
+struct PlacesV2_Point: Codable, BDFArchiveReadWritable, Equatable {
     
     var longitude: Float = 0
     var latitude: Float = 0
     
     init() {}
     
-    init(from decoder: any BitDataFormat.BDFSchemaDecoder) throws {
-        self.longitude = try decoder.decode()
-        self.latitude = try decoder.decode()
+    init(from decoder: any BitDataFormat.BDFArchiveReader) throws {
+        self.longitude = try decoder.read()
+        self.latitude = try decoder.read()
     }
     
-    func encode(to encoder: any BitDataFormat.BDFSchemaEncoder) throws {
-        try encoder.encode(self.longitude)
-        try encoder.encode(self.latitude)
+    func write(to encoder: any BitDataFormat.BDFArchiveWriter) throws {
+        try encoder.write(self.longitude)
+        try encoder.write(self.latitude)
     }
     
     static func ==(lhs: PlacesV2_Point, rhs: PlacesV2_Point) -> Bool {

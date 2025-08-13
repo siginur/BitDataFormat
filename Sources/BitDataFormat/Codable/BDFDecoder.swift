@@ -11,6 +11,8 @@ import SMBitData
 public class BDFDecoder {
     public var userInfo: [CodingUserInfoKey : Any] = [:]
     
+    public init() {}
+    
     public func decode<T>(_ type: T.Type, from data: Data) throws -> T where T: Decodable {
         let storage = try BDFSerialization.bdfObject(with: data)
         let decoder = _BDFDecoder(storage: storage, codingPath: [], userInfo: userInfo)

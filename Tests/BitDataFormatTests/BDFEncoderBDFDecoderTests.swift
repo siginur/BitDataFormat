@@ -64,10 +64,10 @@ final class BDFEncoderBDFDecoderTests: XCTestCase {
     }
     
     func testDouble() {
-//        self.encodeDecode(0.0 as Double)
-//        self.encodeDecode(1.234567 as Double)
-//        self.encodeDecode(-1.234567 as Double)
-//        self.encodeDecode(Double.greatestFiniteMagnitude)
+        self.encodeDecode(0.0 as Double)
+        self.encodeDecode(1.234567 as Double)
+        self.encodeDecode(-1.234567 as Double)
+        self.encodeDecode(Double.greatestFiniteMagnitude)
         self.encodeDecode(Double.infinity)
         self.encodeDecode(-Double.greatestFiniteMagnitude)
         self.encodeDecode(-Double.infinity)
@@ -94,7 +94,6 @@ final class BDFEncoderBDFDecoderTests: XCTestCase {
     
     func testDates() {
         for date in SampleData.shared.sampleDataDates {
-            self.encodeDecode(date)
             self.encodeDecode(date)
         }
     }
@@ -265,7 +264,7 @@ final class BDFEncoderBDFDecoderTests: XCTestCase {
 //            print("Encoded and decoded value: \(value) \(decoded)")
             XCTAssertEqual(decoded, value)
         } catch {
-            XCTFail("Failed to encode/decode \(value): \(error)", file: file, line: line)
+            XCTFail("Failed to pack/unpack \(value): \(error)", file: file, line: line)
         }
     }
     

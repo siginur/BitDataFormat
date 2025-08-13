@@ -153,7 +153,7 @@ final class BDFCodableContainerCoverageTests: XCTestCase {
             let decoded = try decoder.decode(T.self, from: data)
             XCTAssertEqual(decoded, value)
         } catch {
-            XCTFail("Failed to encode/decode \(value): \(error)", file: file, line: line)
+            XCTFail("Failed to pack/unpack \(value): \(error)", file: file, line: line)
         }
     }
 
